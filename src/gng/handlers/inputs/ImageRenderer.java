@@ -1,4 +1,4 @@
-package gng;
+package gng.handlers.inputs;
 
 
 import java.awt.Color;

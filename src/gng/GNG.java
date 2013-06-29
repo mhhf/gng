@@ -1,9 +1,15 @@
 /*
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
+ * 
+ * TODO: Write tests to test the moving visual field area
+ * maybe write a wrapper for the visual area polygon
  */
 package gng;
 
+import gng.handlers.inputs.ImageBasedInputs;
+import gng.handlers.inputs.InputSpaceVisualizer;
+import gng.handlers.SetBasedGNGHandler;
 import gng.core.Node;
 import gng.core.Connection;
 import java.awt.*;
@@ -30,8 +36,10 @@ public class GNG {
      */
     public static void main(String[] args) throws IOException {
         
-        AWTImageDisplayPanel imagePanel = new AWTImageDisplayPanel();
+        // Init the display panel
+        AWTImageDisplayPanel visualizer = new AWTImageDisplayPanel();
         
+        // Handle closing events
         Frame f = new Frame();
         f.addWindowListener(new WindowAdapter()
         {
@@ -43,7 +51,7 @@ public class GNG {
         });
         
         
-        f.add(imagePanel);
+        f.add(visualizer);
         f.setSize(600,622);
         f.setVisible(true);
         
@@ -58,28 +66,28 @@ class AWTImageDisplayPanel extends Panel implements MouseMotionListener, MouseLi
     private int _x, _y; // position on the Image
     
     // Image Loader
-    Image image;
-    Image displayImage;
+    InputSpaceVisualizer inputManager;
+    // Image displayImage;
     
     // Array
     //int array[][];
     int state = 0; // 0 - init, 1- Define Start, 2-Define End + Go!
     private int[][] array;
     
-    SimpleGNGHandler gngHandler;
+    SetBasedGNGHandler gngHandler;
     
  
     public AWTImageDisplayPanel() throws IOException {
         addMouseMotionListener(this);
         addMouseListener(this);
         addKeyListener(this);
-        loadImage();
+        
         setBackground(new Color(0xff00ff));
-        
-        gngHandler = new SimpleGNGHandler(this.convertToInputs(array));
-        this.gngHandler.initCycle();
-        
+        inputManager = new ImageBasedInputs("/Users/mhhf/NetBeansProjects/GNG/assets/testData/grey01.jpg");
+        gngHandler = new SetBasedGNGHandler(inputManager.getArray());
     }
+    
+    
     public void mouseMoved(MouseEvent me) {
         mX = (int) me.getPoint().getX();
         mY = (int) me.getPoint().getY();
@@ -87,40 +95,45 @@ class AWTImageDisplayPanel extends Panel implements MouseMotionListener, MouseLi
         _y = (int) Math.abs(mY/2);
         //System.out.println(mX+" "+mY);
     }
+    
+    
     @Override
     public void paint(Graphics g) {
         super.paint(g);
         int w = getWidth();
         int h = getHeight();
-        int imageWidth = image.getWidth(this);
-        int imageHeight = image.getHeight(this);
+        int imageWidth = this.inputManager.getWidth();
+        int imageHeight = this.inputManager.getHeight();
         int x = (w - imageWidth)/2;
         int y = (h - imageHeight)/2;
-        g.drawImage(image, 0, 0, this);
+        g.drawImage(inputManager.getVisualisation(), 0, 0, this);
     }
+    
+    
     public void paintDot(int x, int y, int color) {
         Graphics g = this.getGraphics();
         if(color == 0) g.setColor(new Color(0xff0000));
         if(color == 1) g.setColor(new Color(0x00ff00));
         if(color == 2) g.setColor(new Color(0x0000ff));
         g.fillRect(x*2, y*2, 2, 2);
-        
     }
     
     @Override
     public Dimension getPreferredSize() {
-        return new Dimension(image.getWidth(this), image.getHeight(this));
+        //return new Dimension(this.visualizer.getWidth(this), this.visualizer.getHeight(this));
+        return null;
     }
+    
     public static Image toImage(BufferedImage bufferedImage) {
         return Toolkit.getDefaultToolkit().createImage(bufferedImage.getSource());
     }
+    
     @Override
     public void mouseDragged(MouseEvent me) {
        
     }
     @Override
     public void mousePressed(MouseEvent me) {
-        
         
     }
     @Override
@@ -134,25 +147,6 @@ class AWTImageDisplayPanel extends Panel implements MouseMotionListener, MouseLi
     @Override
     public void mouseExited(MouseEvent me) {
         
-    }
-
-    private void paintCircle(int x, int y, int r, int c) {
-        Graphics g = this.getGraphics();
-
-        if(c == 0) {
-            g.setColor(Color.orange);
-        } 
-        if(c == 1) g.setColor(Color.green);
-        if(c == 2) g.setColor(Color.blue);
-        if(c == 2) g.setColor(Color.gray);
-        g.drawOval(x*2-r*2, y*2-r*2, r*4, r*4);
-        
-        if(c != 0) {
-            g.drawOval(x*2-r*2+1, y*2-r*2, r*4, r*4);
-            g.drawOval(x*2-r*2-1, y*2-r*2, r*4, r*4);
-            g.drawOval(x*2-r*2, y*2-r*2+1, r*4, r*4);
-            g.drawOval(x*2-r*2, y*2-r*2-1, r*4, r*4);
-        }
     }
     
     public void paintCross(int x, int y, int c, boolean small) {
@@ -170,53 +164,9 @@ class AWTImageDisplayPanel extends Panel implements MouseMotionListener, MouseLi
         }
     } 
     
-    private void loadImage() throws IOException {
-        String fileName = "/Users/mhhf/NetBeansProjects/GNG/assets/testData/grey01.jpg";
-        //Toolkit toolkit = Toolkit.getDefaultToolkit();
-        MediaTracker tracker = new MediaTracker(this);
-        BufferedImage img = ImageIO.read(new File(fileName));
-        
-        ImageRenderer r = new ImageRenderer(img);
-        image = r.image;
-        array = r.array;
-        
-        tracker.addImage(image, 0);
-        
-
-        try
-        {
-            tracker.waitForID(0);
-        }
-        catch(InterruptedException ie)
-        {
-            System.out.println("interrupt: " + ie.getMessage());
-        }
-    }
-    
-    
-    
     
     @Override
-    public void mouseClicked(MouseEvent me) {
-        
-       
-    }
-
-    private ArrayList<DenseVector> convertToInputs(int[][] array) {
-        ArrayList <DenseVector> inputs = new ArrayList();
-        double[] dbl = new double[3];
-        
-        for (int i = 0; i < array.length; i++) {
-            for (int j = 0; j < array[0].length; j++) {
-                dbl[0] = i;
-                dbl[1] = j;
-                dbl[2] = array[i][j]/255.0;
-                inputs.add( new DenseVector( dbl ));
-            }
-        }
-        
-        return inputs;
-    }
+    public void mouseClicked(MouseEvent me) {}
 
     @Override
     public void keyTyped(KeyEvent ke) {

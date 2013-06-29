@@ -1,6 +1,6 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ * GNG Handler controlls the process of the GNG Programm
+ * 
  */
 package gng.core;
 
@@ -11,38 +11,59 @@ import no.uib.cipr.matrix.DenseVector;
 
 
 /**
- *
+ * Handels the gng process
  * @author mhhf
  */
-public abstract class GNGHandler {
+public abstract class AbstractGNGHandler {
     
+    // GNG Parameter
+    // TODO: write getter and setter for evolution?
     private int max_nodes = 100;
     private int a_max = 100;
     private int l = 300;
     private double alpha = 0.5;
     private double betta = 0.0005;
     
+    // iterator counter
     private int iterator = 0;
     
+    /**
+     * the connection collection, containing all connections between nodes
+     */
     protected ArrayList<Connection> connections = new ArrayList();
+    
+    /**
+     *  the nodes collection, containing all nodes of the graph
+     */
     protected ArrayList<Node> nodes = new ArrayList();
-    protected ArrayList<DenseVector> inputs;
     
     
+    /**
+     * metric for the performance of an iteration
+     * summ of all node errors divided by the nodes
+     */
     public double meanError = 0;
 
     
-    public GNGHandler( ArrayList<DenseVector> inputs ) {
-        this.inputs = inputs;
-    }
-
-    public GNGHandler() {
+    /**
+     * Main Constructor
+     */
+    public AbstractGNGHandler() {
+        
     }
     
+    /**
+     * Initialize the gng cyclus with 2 nodes and a connection from with the
+     * gng can evolve
+     * 
+     * TODO: make private and put it in the constructor?
+     *  -> difficult do debug, because random nodes are placed on the field
+     *    -> write an clear graph function, wich is started for the Debug process 
+     */
     public void initCycle() {
         
         // Init
-
+        
         Node n1 = new Node( getRandomInput() );
         Node n2 = new Node( getRandomInput() );
 
@@ -53,6 +74,11 @@ public abstract class GNGHandler {
         
     }
     
+    /**
+     * Cycle wrapper
+     * @param i: the number of itarations to call
+     * @return { selected input point, nearest point to the input, second nearest}
+     */
     public ArrayList cycle(int i){
         for (int j = 0; j < i; j++) {
             iterate(this.iterator++);   
@@ -60,21 +86,35 @@ public abstract class GNGHandler {
         return iterate(this.iterator++);
     }
     
+    /**
+     * Iteration Wrapper
+     * @return {selected input point, nearest point to the input, second nearest}
+     */
     public ArrayList cycle(){
          return iterate(this.iterator++);
     }
     
-    public void negIterate(int i) {
+    
+    /**
+     * Iteration cyclus for removing the blocked area from the graph
+     * @param i: current iteration counter
+     */
+    private void negIterate(int i) {
         // select a random negative point as a negative input source
         DenseVector point = this.getRandomNegativeInput();
         
         // get the two nearest nodes to the point
         Node nearest[] = getNearestNodes( point );
         
-        
     }
     
-    public ArrayList iterate(int i) {
+    /**
+     * Main Iteration cyclus for adjust the gng to the input space
+     * 
+     * @param i
+     * @return { selected input point, nearest point to the input, second nearest}
+     */
+    private ArrayList iterate(int i) {
         
         // select a random point as a new input source
         DenseVector point = getRandomInput();
@@ -99,7 +139,6 @@ public abstract class GNGHandler {
                 }
 
             }
-            
 
             // Update the connection between the nearest nodes
             if ( nearest[0].isConnected( nearest[1] ) ) {
@@ -123,6 +162,7 @@ public abstract class GNGHandler {
             // decrease the error of all nodes
             this.decreaseAllError();
 
+            // Return main results for debugging
             ArrayList arr = new ArrayList();
             arr.add(point);
             arr.add(nearest[0]);
@@ -136,7 +176,11 @@ public abstract class GNGHandler {
     }
     
     
-    // Return two nearest nodes
+    /**
+     * Return two nearest nodes to a given point w
+     * @param w: reference point
+     * @return: two nearest points to the refference point, sorted by distance
+     */
     protected Node[] getNearestNodes( DenseVector w ){
         Node tmpNode,retVal[] = {null, null};
         double first = 0,second = 0; // distance
@@ -170,10 +214,23 @@ public abstract class GNGHandler {
         return retVal;
     }
 
+    /**
+     * Returns an random input point inside the input space
+     * @return: point
+     */
     public abstract DenseVector getRandomInput();
     
+    /**
+     * Returns an point, outside the input space
+     * @return: point
+     */
     public abstract DenseVector getRandomNegativeInput();
     
+    /**
+     * tests if the given point is inside the input space
+     * @param node
+     * @return: boolean if the node is inside the input space
+     */
     public abstract boolean validateNodeForUpdate(Node node);
     
     // public DenseVector getRandomInput() {
@@ -188,14 +245,20 @@ public abstract class GNGHandler {
     //}
 
     
+    /**
+     * adds a node on the field
+     * @param node: node to add
+     */
     public void addNode( Node node ) {
         this.nodes.add( node );
     }
     
-    public void connect( Node n1,Node n2 ) {
+    // connects two nodes
+    protected void connect( Node n1,Node n2 ) {
         this.connections.add( n1.connect(n2) );
     }
     
+    // removes the connection of two nodes
     private void removeConnection( Connection conn ) {
         conn.remove();
         this.connections.remove( conn );
@@ -230,6 +293,10 @@ public abstract class GNGHandler {
         }
     }
 
+    /**
+     * 
+     * @return
+     */
     protected Node findNodeWithLargestError() {
         Node retVar = null;
         
@@ -244,12 +311,19 @@ public abstract class GNGHandler {
         return retVar;
     }
 
+    /**
+     * 
+     */
     protected void decreaseAllError() {
         for (Node node:nodes) {
-            node.error -= node.error*betta;
+            node.error -= node.error * this.betta;
         }
     }
 
+    /**
+     * insert node process
+     * @return
+     */
     protected Node insertNewNode() {
         Node node1 = this.findNodeWithLargestError();
         Node node2 = node1.getMaxErrorNaighbor();
@@ -270,14 +344,26 @@ public abstract class GNGHandler {
         return newNode;
     }
     
+    /**
+     * nodes getter
+     * @return
+     */
     public ArrayList<Node> getNodes(){
         return this.nodes;
     }
     
+    /**
+     * connections getter
+     * @return
+     */
     public ArrayList<Connection> getConnections(){
         return this.connections;
     }
     
+    /**
+     * Calculates the performance of an iteration 
+     * based on the sum of the node errors
+     */
     public void calculateMeanError() {
         double sum = 0;
         for(Node node: nodes) {

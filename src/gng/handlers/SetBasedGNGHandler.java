@@ -2,9 +2,9 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package gng;
+package gng.handlers;
 
-import gng.core.GNGHandler;
+import gng.core.AbstractGNGHandler;
 import gng.core.Node;
 import java.util.ArrayList;
 import no.uib.cipr.matrix.DenseVector;
@@ -13,13 +13,16 @@ import no.uib.cipr.matrix.DenseVector;
  *
  * @author mhhf
  */
-public class SimpleGNGHandler extends GNGHandler {
+public class SetBasedGNGHandler extends AbstractGNGHandler {
+    
+    protected ArrayList<DenseVector> inputs;
 
-    public SimpleGNGHandler(ArrayList<DenseVector> convertToInputs) {
-        super(convertToInputs);
+    public SetBasedGNGHandler(ArrayList<DenseVector> inputs){
+        this.inputs = inputs;
+        this.initCycle();
     }
 
-    public SimpleGNGHandler() {
+    public SetBasedGNGHandler() {
     }
 
     @Override
