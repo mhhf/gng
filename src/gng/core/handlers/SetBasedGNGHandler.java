@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package gng.handlers;
+package gng.core.handlers;
 
 import gng.core.AbstractGNGHandler;
 import gng.core.Node;

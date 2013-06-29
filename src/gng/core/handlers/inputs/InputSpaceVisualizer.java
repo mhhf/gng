@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package gng.handlers.inputs;
+package gng.core.handlers.inputs;
 
 import java.awt.Image;
 import java.util.ArrayList;
@@ -20,6 +20,6 @@ public interface InputSpaceVisualizer {
 
     public int getHeight();
 
-    public ArrayList<DenseVector> getArray();
+    public ArrayList<DenseVector> getInputSet();
     
 }

@@ -7,20 +7,16 @@
  */
 package gng;
 
-import gng.handlers.inputs.ImageBasedInputs;
-import gng.handlers.inputs.InputSpaceVisualizer;
-import gng.handlers.SetBasedGNGHandler;
+import gng.core.handlers.inputs.InputSpaceVisualizer;
+import gng.core.handlers.SetBasedGNGHandler;
 import gng.core.Node;
 import gng.core.Connection;
+import gng.core.handlers.inputs.ImageBasedInputs;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.imageio.ImageIO;
 import no.uib.cipr.matrix.DenseVector;
 
 
@@ -65,16 +61,18 @@ class AWTImageDisplayPanel extends Panel implements MouseMotionListener, MouseLi
     private int mX, mY;
     private int _x, _y; // position on the Image
     
-    // Image Loader
+    
+    // DEFINITION
+    
+    // visualizer
     InputSpaceVisualizer inputManager;
-    // Image displayImage;
     
-    // Array
-    //int array[][];
-    int state = 0; // 0 - init, 1- Define Start, 2-Define End + Go!
-    private int[][] array;
-    
+    // GNG Handeler
     SetBasedGNGHandler gngHandler;
+    
+    // Graph Visualizer
+    GraphVisualizer graphVisualizer;
+    private Image graphVisualisation;
     
  
     public AWTImageDisplayPanel() throws IOException {
@@ -83,47 +81,44 @@ class AWTImageDisplayPanel extends Panel implements MouseMotionListener, MouseLi
         addKeyListener(this);
         
         setBackground(new Color(0xff00ff));
+        
+        // init visualizer
         inputManager = new ImageBasedInputs("/Users/mhhf/NetBeansProjects/GNG/assets/testData/grey01.jpg");
-        gngHandler = new SetBasedGNGHandler(inputManager.getArray());
+        
+        // init Handler
+        gngHandler = new SetBasedGNGHandler(inputManager.getInputSet());
+        
+        // init Graph Visualizer
+        graphVisualizer = new GraphVisualizer( 
+                gngHandler.getNodes(), 
+                gngHandler.getConnections(), 
+                this.getGraphics() );
     }
     
     
+    @Override
     public void mouseMoved(MouseEvent me) {
         mX = (int) me.getPoint().getX();
         mY = (int) me.getPoint().getY();
         _x = (int) Math.abs(mX/2);
         _y = (int) Math.abs(mY/2);
-        //System.out.println(mX+" "+mY);
     }
     
     
     @Override
-    public void paint(Graphics g) {
+    public void paint( Graphics g ) {
         super.paint(g);
-        int w = getWidth();
-        int h = getHeight();
-        int imageWidth = this.inputManager.getWidth();
-        int imageHeight = this.inputManager.getHeight();
-        int x = (w - imageWidth)/2;
-        int y = (h - imageHeight)/2;
         g.drawImage(inputManager.getVisualisation(), 0, 0, this);
+        this.getGraphics().drawImage(this.graphVisualisation, 0, 0, this);
     }
-    
-    
-    public void paintDot(int x, int y, int color) {
-        Graphics g = this.getGraphics();
-        if(color == 0) g.setColor(new Color(0xff0000));
-        if(color == 1) g.setColor(new Color(0x00ff00));
-        if(color == 2) g.setColor(new Color(0x0000ff));
-        g.fillRect(x*2, y*2, 2, 2);
-    }
-    
+   
     @Override
     public Dimension getPreferredSize() {
         //return new Dimension(this.visualizer.getWidth(this), this.visualizer.getHeight(this));
         return null;
     }
-    
+   
+    //TODO: WTF doas this?
     public static Image toImage(BufferedImage bufferedImage) {
         return Toolkit.getDefaultToolkit().createImage(bufferedImage.getSource());
     }
@@ -141,46 +136,29 @@ class AWTImageDisplayPanel extends Panel implements MouseMotionListener, MouseLi
        
     }
     @Override
-    public void mouseEntered(MouseEvent me) {
-        
-    }
+    public void mouseEntered(MouseEvent me) {}
     @Override
-    public void mouseExited(MouseEvent me) {
-        
-    }
-    
-    public void paintCross(int x, int y, int c, boolean small) {
-        
-        if(small) {
-            for (int i = -2; i <= 2; i++) {
-                this.paintDot(x+i, y+i, c);
-                this.paintDot(x+i, y-i, c);
-            }
-        } else{ 
-            for (int i = -3; i <= 3; i++) {
-                this.paintDot(x+i, y, c);
-                this.paintDot(x, y-i, c);
-            }
-        }
-    } 
-    
+    public void mouseExited(MouseEvent me) {}
     
     @Override
     public void mouseClicked(MouseEvent me) {}
 
     @Override
     public void keyTyped(KeyEvent ke) {
-        if (ke.getKeyChar() == ' ') {   
-            this.drawGraph(this.gngHandler.cycle());
-        } else if(ke.getKeyChar() == '1') {
-            this.drawGraph(this.gngHandler.cycle(100));
+        ArrayList points;
+        
+        if(ke.getKeyChar() == '1') {
+            points = this.gngHandler.cycle(100);
         } else if(ke.getKeyChar() == '2') {
-            this.drawGraph(this.gngHandler.cycle(500));
+            points = this.gngHandler.cycle(500);
         } else if(ke.getKeyChar() == '3') {
-            this.drawGraph(this.gngHandler.cycle(1000));
+            points = this.gngHandler.cycle(2000);
+        } else {
+            points = this.gngHandler.cycle();
         }
         
-        
+        this.graphVisualisation = this.graphVisualizer.drawGraph(points);
+        this.paint(this.getGraphics());
     }
 
     @Override
@@ -191,61 +169,5 @@ class AWTImageDisplayPanel extends Panel implements MouseMotionListener, MouseLi
     public void keyReleased(KeyEvent ke) {
         
     }
-    
-    // p1 = inputPoint, nearest, nearest2
-    public void drawGraph( ArrayList points ){
-        
-        this.paint(this.getGraphics());
-        
-        ArrayList <Node> nodes = gngHandler.getNodes();
-        ArrayList <Connection> connections = gngHandler.getConnections();
-        
-        Graphics g = this.getGraphics();
-        g.setColor(new Color(0x02d7ff));
-        for(Connection conn:connections) {
-            g.drawLine(
-                    (int) conn.n1.getVector().get(0)*2,
-                    (int) conn.n1.getVector().get(1)*2,
-                    (int) conn.n2.getVector().get(0)*2,
-                    (int) conn.n2.getVector().get(1)*2
-                    );
-        }
-        
-        for (Node node:nodes) {
-            //System.out.println(node.getVector().get(0)+" "+ (int) node.getVector().get(0));
-            this.paintCross((int) node.getVector().get(0), (int) node.getVector().get(1), 1, true);
-        }
-        
-        this.paintCross(
-                (int)((DenseVector) points.get(0)).get(0), 
-                (int)((DenseVector) points.get(0)).get(1), 
-                0, 
-                false
-                );
-        
-        this.paintCross(
-                (int)((Node) points.get(1)).getVector().get(0), 
-                (int)((Node) points.get(1)).getVector().get(1), 
-                2, 
-                false
-                );
-        
-        this.paintCross(
-                (int)((Node) points.get(2)).getVector().get(0), 
-                (int)((Node) points.get(2)).getVector().get(1), 
-                2, 
-                false
-                );
-        
-        g.setColor(Color.red);
-        g.drawLine(
-                (int)((Node) points.get(1)).getVector().get(0)*2, 
-                (int)((Node) points.get(1)).getVector().get(1)*2,
-                (int)((Node) points.get(2)).getVector().get(0)*2, 
-                (int)((Node) points.get(2)).getVector().get(1)*2
-                );
-        
-    }
-    
 }
 

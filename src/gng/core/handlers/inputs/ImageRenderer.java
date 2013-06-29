@@ -1,4 +1,4 @@
-package gng.handlers.inputs;
+package gng.core.handlers.inputs;
 
 
 import java.awt.Color;
@@ -22,7 +22,7 @@ public class ImageRenderer extends Image{
     public Image image;
     public int array[][];
     
-    public ImageRenderer(BufferedImage img) {
+    public ImageRenderer( BufferedImage img ) {
         BufferedImage buf = new BufferedImage(900, 900, BufferedImage.TYPE_INT_ARGB);
         array = new int[300][300];
         Color c;

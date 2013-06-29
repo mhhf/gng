@@ -4,7 +4,7 @@
  */
 package gng.core;
 
-import gng.handlers.SetBasedGNGHandler;
+import gng.core.handlers.SetBasedGNGHandler;
 import gng.core.AbstractGNGHandler;
 import gng.core.Node;
 import java.util.ArrayList;
