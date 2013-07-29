@@ -4,6 +4,7 @@
  */
 package gng.core;
 
+import gng.core.metrics.AbsoluteDeviationMetric;
 import java.util.ArrayList;
 import no.uib.cipr.matrix.DenseVector;
 
@@ -25,7 +26,7 @@ public abstract class AbstractGNGHandler {
     private double betta = 0.0005;
     
     // iterator counter
-    private int iterator = 0;
+    protected int iterator = 0;
     
     /**
      * the connection collection, containing all connections between nodes
@@ -36,6 +37,8 @@ public abstract class AbstractGNGHandler {
      *  the nodes collection, containing all nodes of the graph
      */
     protected ArrayList<Node> nodes = new ArrayList();
+    
+    
     
     
     /**
@@ -72,6 +75,7 @@ public abstract class AbstractGNGHandler {
 
         this.connect(n1, n2);
         
+        
     }
     
     /**
@@ -83,6 +87,7 @@ public abstract class AbstractGNGHandler {
         for (int j = 0; j < i; j++) {
             iterate(this.iterator++);   
         }
+        
         return iterate(this.iterator++);
     }
     
@@ -134,10 +139,9 @@ public abstract class AbstractGNGHandler {
             nearest[0].incConnectionAges();
             
             for ( Connection conn:nearest[0].connections ) {
-                if(this.validateNodeForUpdate(conn.getOther(nearest[0]))) {
+                //if(this.validateNodeForUpdate(conn.getOther(nearest[0]))) {
                     conn.age ++;
-                }
-
+                //}
             }
 
             // Update the connection between the nearest nodes

@@ -85,7 +85,7 @@ public class ImageBasedInputs implements InputSpaceVisualizer {
     }
 
     @Override
-    public ArrayList<DenseVector> getInputSet() {
+    public ArrayList<DenseVector> getInputs() {
         return this.inputSet;
     }
 }

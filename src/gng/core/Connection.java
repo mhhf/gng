@@ -16,6 +16,7 @@ public class Connection {
     
     public Node n1,n2;
     protected int age = 0;
+
     /*
      * Representation of a Connection between 2 Nodes
      */
@@ -43,4 +44,7 @@ public class Connection {
         this.n2.connections.remove(this); 
     }
     
+    public double getNorm() {
+        return Math.sqrt(Math.pow(this.n1.getX()-this.n2.getX(), 2) + Math.pow(this.n1.getY()-this.n2.getY(), 2));
+    }
 }

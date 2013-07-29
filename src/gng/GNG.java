@@ -32,7 +32,9 @@ public class GNG {
     public static void main(String[] args) throws IOException {
         
         // Init the display panel
-        ImageSetupPanel visualizer = new ImageSetupPanel();
+        //ImageSetupPanel visualizer = new ImageSetupPanel();
+        
+        StaticPolygonSetupPanel visualizer = new StaticPolygonSetupPanel();
         
         // Handle closing events
         Frame f = new Frame();
@@ -48,6 +50,6 @@ public class GNG {
         
         f.add(visualizer);
         f.setSize(600,622);
-        f.setVisible(true);
+        f.setVisible(true);  
     }
 }

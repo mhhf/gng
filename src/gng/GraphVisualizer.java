@@ -7,12 +7,10 @@ package gng;
 import gng.core.Connection;
 import gng.core.Node;
 import gng.core.handlers.SetBasedGNGHandler;
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Image;
-import java.awt.Toolkit;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import math.Vector2D;
 import no.uib.cipr.matrix.DenseVector;
 
 /**
@@ -36,7 +34,7 @@ public class GraphVisualizer {
         if(color == 0) this.g.setColor(new Color(0xff0000));
         if(color == 1) this.g.setColor(new Color(0x00ff00));
         if(color == 2) this.g.setColor(new Color(0x0000ff));
-        this.g.fillRect(x*2, y*2, 2, 2);
+        this.g.fillRect(x, y, 2, 2);
     }
     
     private void paintCross(int x, int y, int c, boolean small) {
@@ -54,6 +52,33 @@ public class GraphVisualizer {
         }
     } 
     
+    public Image drawFilledGraph( Vector2D com ) {
+        BufferedImage output = new BufferedImage(900, 900, BufferedImage.TYPE_INT_ARGB);
+        this.g = output.getGraphics();
+        
+        g.setColor(new Color(0xff0000));
+        for(Connection conn:connections) {
+            
+            int[] xs = {
+                (int) com.x,
+                (int) conn.n1.getVector().get(0),
+                (int) conn.n2.getVector().get(0),
+                (int) com.x
+            };
+            
+            int[] ys = {
+                (int) com.y,
+                (int) conn.n1.getVector().get(1),
+                (int) conn.n2.getVector().get(1),
+                (int) com.y
+            };
+            
+            g.fillPolygon(xs, ys, 4);
+        }
+        
+        return Toolkit.getDefaultToolkit().createImage(output.getSource());
+    }
+    
     // p1 = inputPoint, nearest, nearest2
     public Image drawGraph( ArrayList points ) {
         BufferedImage output = new BufferedImage(900, 900, BufferedImage.TYPE_INT_ARGB);
@@ -62,10 +87,10 @@ public class GraphVisualizer {
         g.setColor(new Color(0x02d7ff));
         for(Connection conn:connections) {
             g.drawLine(
-                    (int) conn.n1.getVector().get(0)*2,
-                    (int) conn.n1.getVector().get(1)*2,
-                    (int) conn.n2.getVector().get(0)*2,
-                    (int) conn.n2.getVector().get(1)*2
+                    (int) conn.n1.getVector().get(0),
+                    (int) conn.n1.getVector().get(1),
+                    (int) conn.n2.getVector().get(0),
+                    (int) conn.n2.getVector().get(1)
                     );
         }
         
@@ -97,10 +122,10 @@ public class GraphVisualizer {
         
         g.setColor(Color.red);
         g.drawLine(
-                (int)((Node) points.get(1)).getVector().get(0)*2, 
-                (int)((Node) points.get(1)).getVector().get(1)*2,
-                (int)((Node) points.get(2)).getVector().get(0)*2, 
-                (int)((Node) points.get(2)).getVector().get(1)*2
+                (int)((Node) points.get(1)).getVector().get(0), 
+                (int)((Node) points.get(1)).getVector().get(1),
+                (int)((Node) points.get(2)).getVector().get(0), 
+                (int)((Node) points.get(2)).getVector().get(1)
                 );
      
         this.visualisation = Toolkit.getDefaultToolkit().createImage(output.getSource());

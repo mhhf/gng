@@ -1,12 +1,10 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ * Interface for converting the input space to an image for a visualisation
  */
 package gng.core.handlers.inputs;
 
 import java.awt.Image;
 import java.util.ArrayList;
-import no.uib.cipr.matrix.DenseVector;
 
 /**
  *
@@ -20,6 +18,6 @@ public interface InputSpaceVisualizer {
 
     public int getHeight();
 
-    public ArrayList<DenseVector> getInputSet();
+    public ArrayList getInputs();
     
 }

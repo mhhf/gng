@@ -42,13 +42,14 @@ public class ImageSetupPanel  extends Panel implements KeyListener{
         inputManager = new ImageBasedInputs("/Users/mhhf/NetBeansProjects/GNG/assets/testData/grey01.jpg");
         
         // init Handler
-        gngHandler = new SetBasedGNGHandler(inputManager.getInputSet());
+        gngHandler = new SetBasedGNGHandler(inputManager.getInputs());
         
         // init Graph Visualizer
         graphVisualizer = new GraphVisualizer( 
                 gngHandler.getNodes(), 
                 gngHandler.getConnections(), 
-                this.getGraphics() );
+                this.getGraphics()
+                );
     }
     
     @Override
