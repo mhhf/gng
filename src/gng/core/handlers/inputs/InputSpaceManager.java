@@ -10,7 +10,9 @@ import java.util.ArrayList;
  *
  * @author mhhf
  */
-public interface InputSpaceVisualizer {
+public interface InputSpaceManager {
+	
+    public void update( int i );
     
     public Image getVisualisation();
 

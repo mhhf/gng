@@ -7,7 +7,7 @@ import gng.GraphVisualizer;
 import gng.core.Connection;
 import gng.core.Node;
 import gng.core.handlers.PolygonBasedGNGHandler;
-import gng.core.handlers.inputs.InputSpaceVisualizer;
+import gng.core.handlers.inputs.InputSpaceManager;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Image;
@@ -23,11 +23,11 @@ import math.Vector2D;
 public class SpaceMetric {
     
     
-    private final InputSpaceVisualizer inputManager;
+    private final InputSpaceManager inputManager;
     private final PolygonBasedGNGHandler gngHandler;
     private final GraphVisualizer graphVisualizer;
     
-    public SpaceMetric(InputSpaceVisualizer inputManager, PolygonBasedGNGHandler gngHandler, GraphVisualizer graphVisualizer) {
+    public SpaceMetric(InputSpaceManager inputManager, PolygonBasedGNGHandler gngHandler, GraphVisualizer graphVisualizer) {
         this.inputManager = inputManager;
         this.gngHandler = gngHandler;
         this.graphVisualizer = graphVisualizer;

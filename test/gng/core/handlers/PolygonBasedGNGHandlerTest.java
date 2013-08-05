@@ -36,8 +36,8 @@ public class PolygonBasedGNGHandlerTest {
     public void setUp() {        
         // FIXME: fucking radius calculation is shit, when the polygon is like w:10 h:400 
         
-        this.handler1 = new PolygonBasedGNGHandler( StaticPolygonInputs.POLYGON_TYPE1 );
-        this.handler2 = new PolygonBasedGNGHandler( StaticPolygonInputs.POLYGON_TYPE2 );
+        //this.handler1 = new PolygonBasedGNGHandler( StaticPolygonInputs.POLYGON_TYPE1 );
+        //this.handler2 = new PolygonBasedGNGHandler( StaticPolygonInputs.POLYGON_TYPE2 );
     }
     
     @After

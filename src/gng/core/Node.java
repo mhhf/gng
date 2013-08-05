@@ -117,7 +117,7 @@ public class Node {
     }
     
     // incremet the age of all connected nodes
-    protected void incConnectionAges() {
+    void incConnectionAges() {
         for ( Connection conn:connections ) {
             conn.age ++;
         }

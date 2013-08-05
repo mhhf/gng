@@ -5,7 +5,6 @@
 package gng.core;
 
 import gng.core.handlers.SetBasedGNGHandler;
-import gng.core.AbstractGNGHandler;
 import gng.core.Node;
 import java.util.ArrayList;
 import no.uib.cipr.matrix.DenseVector;

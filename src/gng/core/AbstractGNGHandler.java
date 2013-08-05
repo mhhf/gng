@@ -4,6 +4,8 @@
  */
 package gng.core;
 
+import gng.core.Connection;
+import gng.core.Node;
 import gng.core.metrics.AbsoluteDeviationMetric;
 import java.util.ArrayList;
 import no.uib.cipr.matrix.DenseVector;
@@ -119,7 +121,7 @@ public abstract class AbstractGNGHandler {
      * @param i
      * @return { selected input point, nearest point to the input, second nearest}
      */
-    private ArrayList iterate(int i) {
+    protected ArrayList iterate(int i) {
         
         // select a random point as a new input source
         DenseVector point = getRandomInput();

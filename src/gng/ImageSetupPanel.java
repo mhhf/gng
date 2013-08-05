@@ -6,7 +6,7 @@ package gng;
 
 import gng.core.handlers.SetBasedGNGHandler;
 import gng.core.handlers.inputs.ImageBasedInputs;
-import gng.core.handlers.inputs.InputSpaceVisualizer;
+import gng.core.handlers.inputs.InputSpaceManager;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -23,7 +23,7 @@ public class ImageSetupPanel  extends Panel implements KeyListener{
      // DEFINITION
     
     // visualizer
-    InputSpaceVisualizer inputManager;
+    InputSpaceManager inputManager;
     
     // GNG Handeler
     SetBasedGNGHandler gngHandler;

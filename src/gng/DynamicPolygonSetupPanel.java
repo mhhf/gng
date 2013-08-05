@@ -6,7 +6,9 @@ package gng;
 
 import gng.core.handlers.inputs.StaticPolygonInputs;
 import gng.core.handlers.PolygonBasedGNGHandler;
+import gng.core.handlers.inputs.DynamicPolygonInputs;
 import gng.core.handlers.inputs.InputSpaceManager;
+import gng.core.handlers.inputs.dynamicPolygons.RectangleSinScan;
 import gng.core.metrics.AbsoluteDeviationMetric;
 import gng.core.metrics.SpaceMetric;
 import java.awt.*;
@@ -20,7 +22,7 @@ import java.util.ArrayList;
  *
  * @author mhhf
  */
-public class StaticPolygonSetupPanel  extends Panel implements KeyListener{
+public class DynamicPolygonSetupPanel  extends Panel implements KeyListener{
     
      // DEFINITION
     
@@ -39,13 +41,13 @@ public class StaticPolygonSetupPanel  extends Panel implements KeyListener{
     protected SpaceMetric psMetric;
     
  
-    public StaticPolygonSetupPanel() throws IOException {
+    public DynamicPolygonSetupPanel() throws IOException {
         addKeyListener(this);
         
         setBackground(new Color(0xff00ff));
          
         // init visualizer
-        inputManager = new StaticPolygonInputs( StaticPolygonInputs.POLYGON_TYPE4 );
+        inputManager = new DynamicPolygonInputs( new RectangleSinScan() );
         
         // init Handler
         gngHandler = new PolygonBasedGNGHandler( inputManager );

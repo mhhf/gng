@@ -11,6 +11,7 @@ package gng.core.handlers;
 import gng.core.AbstractGNGHandler;
 import gng.core.Connection;
 import gng.core.Node;
+import gng.core.handlers.inputs.InputSpaceManager;
 import java.util.ArrayList;
 import math.BoundingBox;
 import math.Vector2D;
@@ -34,6 +35,7 @@ public class PolygonBasedGNGHandler extends AbstractGNGHandler {
     
     // maximal distance of a white point to the comPoint
     public double polygonRadius;
+    public InputSpaceManager inputManager;
     
     private BoundingBox boundingBox;
     
@@ -44,9 +46,11 @@ public class PolygonBasedGNGHandler extends AbstractGNGHandler {
      * @param height
      * @param list: polygon
      */
-    public PolygonBasedGNGHandler( ArrayList<Vector2D> list ){
-        this.polygon = list;
-        this.boundingBox = new BoundingBox(list);
+    public PolygonBasedGNGHandler( InputSpaceManager inputManager ){
+	this.inputManager = inputManager;
+        this.polygon = inputManager.getInputs();
+	System.out.println("s :" + this.polygon.size());
+        this.boundingBox = new BoundingBox(this.polygon);
         
         this.init();
         
@@ -63,6 +67,16 @@ public class PolygonBasedGNGHandler extends AbstractGNGHandler {
         
         // init the first cycle
         this.initCycle();
+    }
+    
+    
+    
+    @Override
+    public ArrayList iterate(int i) {
+	this.inputManager.update(i);
+	this.polygon = this.inputManager.getInputs();
+	this.boundingBox.calculateBoundingBox(this.polygon);
+	return super.iterate(i);
     }
 
     

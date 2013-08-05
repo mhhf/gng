@@ -4,7 +4,7 @@
  */
 package gng.core.handlers.inputs;
 
-import gng.core.handlers.inputs.InputSpaceVisualizer;
+import gng.core.handlers.inputs.InputSpaceManager;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Toolkit;
@@ -17,7 +17,7 @@ import math.Vector2D;
  *
  * @author mhhf
  */
-public class StaticPolygonInputs implements InputSpaceVisualizer {
+public class StaticPolygonInputs implements InputSpaceManager {
 
     // rectangle
     public static ArrayList<Vector2D> POLYGON_TYPE1 = new ArrayList<Vector2D>();
@@ -115,5 +115,10 @@ public class StaticPolygonInputs implements InputSpaceVisualizer {
         g.fillPolygon(x,y,this.polygon.size());
         this.image = Toolkit.getDefaultToolkit().createImage(img.getSource());
     }
+
+	@Override
+	public void update(int i) {
+		// do nothing
+	}
     
 }

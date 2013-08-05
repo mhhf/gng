@@ -7,7 +7,7 @@
  */
 package gng;
 
-import gng.core.handlers.inputs.InputSpaceVisualizer;
+import gng.core.handlers.inputs.InputSpaceManager;
 import gng.core.handlers.SetBasedGNGHandler;
 import gng.core.Node;
 import gng.core.Connection;
@@ -34,7 +34,7 @@ public class GNG {
         // Init the display panel
         //ImageSetupPanel visualizer = new ImageSetupPanel();
         
-        StaticPolygonSetupPanel visualizer = new StaticPolygonSetupPanel();
+        DynamicPolygonSetupPanel visualizer = new DynamicPolygonSetupPanel();
         
         // Handle closing events
         Frame f = new Frame();

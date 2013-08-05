@@ -4,7 +4,8 @@
  */
 package gng.core.handlers.inputs;
 
-import gng.core.handlers.inputs.InputSpaceVisualizer;
+import gng.core.handlers.inputs.InputSpaceManager;
+import gng.core.handlers.inputs.dynamicPolygons.DynamicPolygonInterface;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Toolkit;
@@ -17,61 +18,21 @@ import math.Vector2D;
  *
  * @author mhhf
  */
-public class DynamicPolygonInputs implements InputSpaceVisualizer {
-
-    // rectangle
-    public static ArrayList<Vector2D> POLYGON_TYPE1 = new ArrayList<Vector2D>();
-    // square
-    public static ArrayList<Vector2D> POLYGON_TYPE2 = new ArrayList<Vector2D>();
-    // star
-    public static ArrayList<Vector2D> POLYGON_TYPE3 = new ArrayList<Vector2D>();
-    // U-Shape
-    public static ArrayList<Vector2D> POLYGON_TYPE4 = new ArrayList<Vector2D>();
-    
-    static {
-	// Rectangle
-        DynamicPolygonInputs.POLYGON_TYPE1.add( new Vector2D( 20 , 20  ) );
-        DynamicPolygonInputs.POLYGON_TYPE1.add( new Vector2D( 80, 20  ) );
-        DynamicPolygonInputs.POLYGON_TYPE1.add( new Vector2D( 80, 280 ) );
-        DynamicPolygonInputs.POLYGON_TYPE1.add( new Vector2D( 20 , 280 ) );
-        
-	// square
-        DynamicPolygonInputs.POLYGON_TYPE2.add( new Vector2D( 50 , 50  ) );
-        DynamicPolygonInputs.POLYGON_TYPE2.add( new Vector2D( 350, 50  ) );
-        DynamicPolygonInputs.POLYGON_TYPE2.add( new Vector2D( 350, 350 ) );
-        DynamicPolygonInputs.POLYGON_TYPE2.add( new Vector2D( 50 , 350 ) );
-        
-	// Star
-        for( int i=0; i<10; i++ ){
-            DynamicPolygonInputs.POLYGON_TYPE3.add( new Vector2D( 
-                    150 + Math.cos( ( Math.PI / 5 ) * i ) * (50 + 100*(i % 2)),
-                    150 + Math.sin( ( Math.PI / 5 ) * i ) * (50 + 100*(i % 2))
-                    ) );
-        }
-
-	// U - Shape
-        DynamicPolygonInputs.POLYGON_TYPE4.add( new Vector2D( 20 , 20  ) );
-        DynamicPolygonInputs.POLYGON_TYPE4.add( new Vector2D( 280, 20  ) );
-        DynamicPolygonInputs.POLYGON_TYPE4.add( new Vector2D( 280, 280 ) );
-        DynamicPolygonInputs.POLYGON_TYPE4.add( new Vector2D( 20 , 280 ) );
-        DynamicPolygonInputs.POLYGON_TYPE4.add( new Vector2D( 20 , 100 ) );
-        DynamicPolygonInputs.POLYGON_TYPE4.add( new Vector2D( 200 , 100 ) );
-        DynamicPolygonInputs.POLYGON_TYPE4.add( new Vector2D( 200 , 60 ) );
-        DynamicPolygonInputs.POLYGON_TYPE4.add( new Vector2D( 20 , 60 ) );
-
-    }
+public class DynamicPolygonInputs implements InputSpaceManager {
     
     private Image image;
+    private DynamicPolygonInterface dynamicPolygon;
     private ArrayList<Vector2D> polygon;
     private int scaleFactor = 1;
-    
+    private double t; // local time
     
     public DynamicPolygonInputs() {
     }
 
-    public DynamicPolygonInputs( ArrayList<Vector2D> polygon ) {
-        this.polygon = polygon;
-        
+    public DynamicPolygonInputs( DynamicPolygonInterface polygon ) {
+        this.dynamicPolygon = polygon;
+	this.t = 0;
+	this.constructPolygon();
     }
     
     public void setScaleFactor( int scale ) {
@@ -98,22 +59,33 @@ public class DynamicPolygonInputs implements InputSpaceVisualizer {
     public ArrayList<Vector2D> getInputs() {
         return this.polygon;
     }
+    
+    public void constructPolygon() {
+	    this.polygon = this.dynamicPolygon.construct(t);
+    }
 
     private void renderPolygon() {
         BufferedImage img = new BufferedImage(600,600,BufferedImage.TYPE_INT_RGB);
         Graphics g = img.getGraphics();
         g.clearRect(0, 0, 600, 600);
-        int x[] = new int[this.polygon.size()];
-        int y[] = new int[this.polygon.size()];
+	
+        int x[] = new int[polygon.size()];
+        int y[] = new int[polygon.size()];
         
-        for (int i = 0; i < this.polygon.size(); i++) {
-            x[i] = (int) this.polygon.get(i).x * this.scaleFactor;
-            y[i] = (int) this.polygon.get(i).y * this.scaleFactor;
+        for (int i = 0; i < polygon.size(); i++) {
+            x[i] = (int) polygon.get(i).x * this.scaleFactor;
+            y[i] = (int) polygon.get(i).y * this.scaleFactor;
         }
         
         // test if bigger then 1
-        g.fillPolygon(x,y,this.polygon.size());
+        g.fillPolygon( x, y, polygon.size() );
         this.image = Toolkit.getDefaultToolkit().createImage(img.getSource());
     }
+
+	@Override
+	public void update(int i) {
+		this.t = i*Math.PI/1000;
+		this.constructPolygon();
+	}
     
 }

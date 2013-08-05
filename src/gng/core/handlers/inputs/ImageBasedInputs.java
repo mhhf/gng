@@ -18,7 +18,7 @@ import no.uib.cipr.matrix.DenseVector;
  *
  * @author mhhf
  */
-public class ImageBasedInputs implements InputSpaceVisualizer {
+public class ImageBasedInputs implements InputSpaceManager {
     
     // image for the visualisation
     private Image image;
@@ -88,4 +88,9 @@ public class ImageBasedInputs implements InputSpaceVisualizer {
     public ArrayList<DenseVector> getInputs() {
         return this.inputSet;
     }
+
+	@Override
+	public void update(int i) {
+		// do nothing
+	}
 }
