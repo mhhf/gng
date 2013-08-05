@@ -93,7 +93,7 @@ public class DynamicPolygonSetupPanel  extends Panel implements KeyListener{
                 break;
             case 'l':
                 points = this.gngHandler.cycle();
-                this.graphVisualisation = this.graphVisualizer.drawFilledGraph(gngHandler.getComPoint());
+		this.graphVisualisation = this.graphVisualizer.drawGraph(points);
 		this.gngHandler.calculateMeanError();
                 System.out.println("Iterations: "+this.gngHandler.getIterations());
 		System.out.println("AD: " + 1/this.adMetric.calculate());

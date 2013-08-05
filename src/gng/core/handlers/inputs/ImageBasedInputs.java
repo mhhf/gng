@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import javax.imageio.ImageIO;
+import math.Vector2D;
 import no.uib.cipr.matrix.DenseVector;
 
 
@@ -92,5 +93,15 @@ public class ImageBasedInputs implements InputSpaceManager {
 	@Override
 	public void update(int i) {
 		// do nothing
+	}
+
+	@Override
+	public boolean pointInPolygon(Vector2D vec) {
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+
+	@Override
+	public boolean linesCrossed(double x1, double y1, double x2, double y2) {
+		throw new UnsupportedOperationException("Not supported yet.");
 	}
 }

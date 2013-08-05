@@ -37,7 +37,7 @@ public class SpaceMetric {
 	    double crossed = 0;
 	    
 	    for(Connection con: this.gngHandler.getConnections()){
-		    if( this.gngHandler.linesCrossed(
+		    if( this.gngHandler.inputManager.linesCrossed(
 			    con.n1.getX(), 
 			    con.n1.getY(),
 			    con.n2.getX(),
@@ -61,7 +61,7 @@ public class SpaceMetric {
 	for (int i = 0; i < steps; i++) {
 	    for (int j = 0; j < steps; j++) {
 		point = new Vector2D(i,j);
-		if( gngHandler.pointInPolygon(point) ){
+		if( gngHandler.inputManager.pointInPolygon(point) ){
 		    node = gngHandler.getNearestNode( point );
 		    error += Math.sqrt( Math.pow( node.getX() - point.x , 2 ) 
 			    + Math.pow( node.getY() - point.y, 2 )   );

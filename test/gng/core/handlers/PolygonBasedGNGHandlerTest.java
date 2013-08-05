@@ -44,26 +44,6 @@ public class PolygonBasedGNGHandlerTest {
     public void tearDown() {
     }
     
-    @Test
-    public void testCalculateCOMPoint() {
-        System.out.println("calculateCOMPoint");
-        
-        assertTrue(this.handler1.calculateCOMPoint().x - 50 < 0.01 && this.handler1.calculateCOMPoint().y - 150 < 0.01 );
-        assertTrue(this.handler2.calculateCOMPoint().x - 200 < 0.01 && this.handler1.calculateCOMPoint().y - 200 < 0.01 );
-        
-    }
-    
-    @Test
-    public void testCalculateCOMRadius(){
-        System.out.println("calculateCOMRadius");
-        
-        this.handler1.calculateCOMPoint();
-        this.handler2.calculateCOMPoint();
-        
-        
-        assertEquals(133.4166, this.handler1.calculateCOMRadius() ,0.01);
-        assertEquals(212.1320, this.handler2.calculateCOMRadius() ,0.01);
-    }
     
     
     /**
@@ -72,8 +52,6 @@ public class PolygonBasedGNGHandlerTest {
     @Test
     public void testPointInPolygon() {
         System.out.println("pointInPolygon");
-        
-        this.handler1.init();
 
         assertTrue( handler1.pointInPolygon(new Vector2D( 20, 20 )) );
         assertTrue( handler1.pointInPolygon(new Vector2D( 20.1, 79.9 )) );

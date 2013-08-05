@@ -120,5 +120,17 @@ public class StaticPolygonInputs implements InputSpaceManager {
 	public void update(int i) {
 		// do nothing
 	}
+
+	@Override
+	public boolean pointInPolygon(Vector2D vec) {
+		// do nothing
+		return true;
+	}
+
+	@Override
+	public boolean linesCrossed(double x1, double y1, double x2, double y2) {
+		// do notihng
+		return false;
+	}
     
 }
