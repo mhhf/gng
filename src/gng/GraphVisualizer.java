@@ -31,9 +31,9 @@ public class GraphVisualizer {
     }
     
     private void paintDot(int x, int y, int color) {
-        if(color == 0) this.g.setColor(new Color(0xff0000));
-        if(color == 1) this.g.setColor(new Color(0x00ff00));
-        if(color == 2) this.g.setColor(new Color(0x0000ff));
+        if(color == 0) this.g.setColor(new Color(0xda5050));
+        if(color == 1) this.g.setColor(new Color(0xfaf8f3));
+        if(color == 2) this.g.setColor(new Color(0x96a854));
         this.g.fillRect(x, y, 2, 2);
     }
     
@@ -41,8 +41,8 @@ public class GraphVisualizer {
         
         if(small) {
             for (int i = -2; i <= 2; i++) {
-                this.paintDot(x+i, y+i, c);
-                this.paintDot(x+i, y-i, c);
+                this.paintDot(x+i, y+i, i==0?0:c);
+                this.paintDot(x+i, y-i, i==0?0:c);
             }
         } else{ 
             for (int i = -3; i <= 3; i++) {
@@ -84,7 +84,10 @@ public class GraphVisualizer {
         BufferedImage output = new BufferedImage(900, 900, BufferedImage.TYPE_INT_ARGB);
         this.g = output.getGraphics();
         
-        g.setColor(new Color(0x02d7ff));
+	
+	// CONNECTIONS
+	
+        g.setColor(new Color(0x96a854));
         for(Connection conn:connections) {
             g.drawLine(
                     (int) conn.n1.getVector().get(0),
@@ -94,6 +97,7 @@ public class GraphVisualizer {
                     );
         }
         
+	// NODE CROSSES
         for (Node node:nodes) {
             //System.out.println(node.getVector().get(0)+" "+ (int) node.getVector().get(0));
             this.paintCross((int) node.getVector().get(0), (int) node.getVector().get(1), 1, true);
@@ -109,15 +113,15 @@ public class GraphVisualizer {
         this.paintCross(
                 (int)((Node) points.get(1)).getVector().get(0), 
                 (int)((Node) points.get(1)).getVector().get(1), 
-                2, 
-                false
+                0, 
+                true
                 );
         
         this.paintCross(
                 (int)((Node) points.get(2)).getVector().get(0), 
                 (int)((Node) points.get(2)).getVector().get(1), 
-                2, 
-                false
+                0, 
+                true
                 );
         
         g.setColor(Color.red);

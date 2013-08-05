@@ -122,7 +122,7 @@ public class StaticPolygonInputs implements InputSpaceManager {
 	}
 
 	@Override
-	public boolean pointInPolygon(Vector2D vec) {
+	public boolean pointInPolygon(Vector2D vec, boolean isMetric) {
 		// do nothing
 		return true;
 	}

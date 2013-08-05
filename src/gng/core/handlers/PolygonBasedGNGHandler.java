@@ -84,7 +84,7 @@ public class PolygonBasedGNGHandler extends AbstractGNGHandler {
                     this.inputManager.b.x + Math.random() * this.inputManager.b.w,
                     this.inputManager.b.y + Math.random() * this.inputManager.b.h
                     );
-            if ( this.inputManager.pointInPolygon(tmpPoint) ) { found = true; }
+            if ( this.inputManager.pointInPolygon(tmpPoint, false) ) { found = true; }
         } while (!found);
                 
         double[] d = { tmpPoint.x, tmpPoint.y };
