@@ -6,6 +6,8 @@ package gng.core.handlers.inputs;
 
 import gng.core.handlers.inputs.InputSpaceManager;
 import gng.core.handlers.inputs.dynamicPolygons.DynamicPolygonInterface;
+import gng.core.handlers.inputs.dynamicPolygons.WindowObsticle;
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Toolkit;
@@ -18,18 +20,20 @@ import math.Vector2D;
  *
  * @author mhhf
  */
-public class DynamicPolygonInputs implements InputSpaceManager {
+public class WindowPolygonInputs implements InputSpaceManager {
     
     private Image image;
-    private DynamicPolygonInterface dynamicPolygon;
-    private ArrayList<Vector2D> polygon;
+    private WindowObsticle dynamicPolygon;
+    private ArrayList<Vector2D> area;
+    private ArrayList<Vector2D> window;
+    private ArrayList<Vector2D> obsticle;
     private int scaleFactor = 1;
     private double t; // local time
     
-    public DynamicPolygonInputs() {
+    public WindowPolygonInputs() {
     }
 
-    public DynamicPolygonInputs( DynamicPolygonInterface polygon ) {
+    public WindowPolygonInputs( WindowObsticle polygon ) {
         this.dynamicPolygon = polygon;
 	this.t = 0;
 	
@@ -58,29 +62,61 @@ public class DynamicPolygonInputs implements InputSpaceManager {
 
     @Override
     public ArrayList<Vector2D> getInputs() {
-        return this.polygon;
+        return this.window;
     }
     
     public void constructPolygon() {
-	    this.polygon = this.dynamicPolygon.construct(t);
-	    this.b.calculateBoundingBox(this.polygon);
+	    this.dynamicPolygon.construct(t/6);
+	    this.window = this.dynamicPolygon.getWindow();
+	    this.area = this.dynamicPolygon.getArea();
+	    this.obsticle = this.dynamicPolygon.getObsticle();
+	    this.b.calculateBoundingBox(this.window);
     }
 
     private void renderPolygon() {
         BufferedImage img = new BufferedImage(600,600,BufferedImage.TYPE_INT_RGB);
         Graphics g = img.getGraphics();
-        g.clearRect(0, 0, 600, 600);
+	g.setColor(new Color(76,79,68));
+        g.fillRect(0, 0, 600, 600);
 	
-        int x[] = new int[polygon.size()];
-        int y[] = new int[polygon.size()];
+        int x[] = new int[area.size()];
+        int y[] = new int[area.size()];
         
-        for (int i = 0; i < polygon.size(); i++) {
-            x[i] = (int) polygon.get(i).x * this.scaleFactor;
-            y[i] = (int) polygon.get(i).y * this.scaleFactor;
+        for (int i = 0; i < area.size(); i++) {
+            x[i] = (int) area.get(i).x * this.scaleFactor;
+            y[i] = (int) area.get(i).y * this.scaleFactor;
         }
         
         // test if bigger then 1
-        g.fillPolygon( x, y, polygon.size() );
+	g.setColor(new Color(250,248,243));
+        g.fillPolygon( x, y, area.size() );
+	
+	x = new int[obsticle.size()];
+        y = new int[obsticle.size()];
+        
+        for (int i = 0; i < obsticle.size(); i++) {
+            x[i] = (int) obsticle.get(i).x * this.scaleFactor;
+            y[i] = (int) obsticle.get(i).y * this.scaleFactor;
+        }
+        
+        // test if bigger then 1
+	g.setColor(new Color(218,80,80));
+        g.fillPolygon( x, y, obsticle.size() );
+	
+	
+	x = new int[window.size()];
+        y = new int[window.size()];
+        
+        for (int i = 0; i < window.size(); i++) {
+            x[i] = (int) window.get(i).x * this.scaleFactor;
+            y[i] = (int) window.get(i).y * this.scaleFactor;
+        }
+        
+        // test if bigger then 1
+	g.setColor(new Color(47,78,120));
+        g.drawPolygon( x, y, window.size() );
+	
+	
         this.image = Toolkit.getDefaultToolkit().createImage(img.getSource());
     }
     
@@ -89,7 +125,7 @@ public class DynamicPolygonInputs implements InputSpaceManager {
      * it can be found here: http://erich.realtimerendering.com/ptinpoly/
      * later i will write a faster aproach, considdering my need for the polygon size
      */
-    public boolean pointInPolygon( Vector2D point , boolean isMetric) {
+    public boolean pointInPolygon(ArrayList<Vector2D> polygon, Vector2D point ) {
         
         // LOCAL PARAMETER
         int assumedMaxPolygonSize = 10000;
@@ -97,16 +133,17 @@ public class DynamicPolygonInputs implements InputSpaceManager {
         int intersectionCounter = 0;
         
         // TOOD: test for empty polygon or < 3, then return false 
-        for(int i = 0; i<this.polygon.size(); i++){
+        for(int i = 0; i<polygon.size(); i++){
             if( linesIntersect( 
-                    this.polygon.get(i).x, this.polygon.get(i).y,
-                    this.polygon.get( (i + 1) % (this.polygon.size())  ).x, this.polygon.get( (i + 1) % (this.polygon.size()) ).y,
+                    polygon.get(i).x, polygon.get(i).y,
+                    polygon.get( (i + 1) % (polygon.size())  ).x, polygon.get( (i + 1) % (polygon.size()) ).y,
                     point.x, point.y,
                     point.x + assumedMaxPolygonSize, point.y
                     ) ) {
                 intersectionCounter ++;
             }
         } // for
+	
         
         // creteria for the point, to be inside the polygon.
         return intersectionCounter % 2 == 1;
@@ -115,12 +152,23 @@ public class DynamicPolygonInputs implements InputSpaceManager {
     
     public boolean linesCrossed(double x1, double y1, double x2, double y2){
 	    
-	    for(int i=0; i<this.polygon.size(); i++){
+	    for(int i=0; i<this.area.size(); i++){
 		    if(this.linesIntersect(x1, y1, x2, y2, 
-			    this.polygon.get(i).x,
-			    this.polygon.get(i).y, 
-			    this.polygon.get( (i+1) % this.polygon.size() ).x ,
-			    this.polygon.get( (i+1) % this.polygon.size() ).y
+			    this.area.get(i).x,
+			    this.area.get(i).y, 
+			    this.area.get( (i+1) % this.area.size() ).x ,
+			    this.area.get( (i+1) % this.area.size() ).y
+			    )){
+			    return true;
+		    }
+	    }
+	    
+	    for(int i=0; i<this.obsticle.size(); i++){
+		    if(this.linesIntersect(x1, y1, x2, y2, 
+			    this.obsticle.get(i).x,
+			    this.obsticle.get(i).y, 
+			    this.obsticle.get( (i+1) % this.obsticle.size() ).x ,
+			    this.obsticle.get( (i+1) % this.obsticle.size() ).y
 			    )){
 			    return true;
 		    }
@@ -202,6 +250,15 @@ public class DynamicPolygonInputs implements InputSpaceManager {
 	public void update(int i) {
 		this.t = i*Math.PI/1000;
 		this.constructPolygon();
+	}
+
+	@Override
+	public boolean pointInPolygon(Vector2D vec, boolean isMetric ) {
+		if(isMetric) {
+		return this.pointInPolygon(area, vec) && !this.pointInPolygon(obsticle, vec);
+		} else {
+		return this.pointInPolygon(window, vec) && !this.pointInPolygon(obsticle, vec);
+		}
 	}
     
 }

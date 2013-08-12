@@ -17,6 +17,8 @@ import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import no.uib.cipr.matrix.DenseVector;
 
 
@@ -29,14 +31,27 @@ public class GNG {
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args){
+		
+		try {
+			initFrame();
+		} catch (IOException ex) {
+			Logger.getLogger(GNG.class.getName()).log(Level.SEVERE, null, ex);
+		}
+		
+		// HEADLERSS
+		
+		//HeadlessSetup h = new HeadlessSetup();
+	
         
-        // Init the display panel
-        //ImageSetupPanel visualizer = new ImageSetupPanel();
+    }
+    
+    public static void initFrame() throws IOException{
+	// VISUALZER
+        WindowObsticlePolygonSetupPanel visualizer = new WindowObsticlePolygonSetupPanel();
         
-        DynamicPolygonSetupPanel visualizer = new DynamicPolygonSetupPanel();
-        
-        // Handle closing events
+	    
+	// Handle closing events
         Frame f = new Frame();
         f.addWindowListener(new WindowAdapter()
         {

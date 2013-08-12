@@ -26,7 +26,7 @@ public interface InputSpaceManager {
 
     public ArrayList getInputs();
     
-    public boolean pointInPolygon( Vector2D vec );
+    public boolean pointInPolygon( Vector2D vec , boolean isMetric);
     
     public boolean linesCrossed(double x1, double y1, double x2, double y2);
     

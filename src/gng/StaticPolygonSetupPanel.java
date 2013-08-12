@@ -59,7 +59,7 @@ public class StaticPolygonSetupPanel  extends Panel implements KeyListener{
         
         // init Metrics
         this.adMetric = new AbsoluteDeviationMetric( gngHandler.getConnections() );
-        this.psMetric = new SpaceMetric(inputManager, gngHandler, graphVisualizer);
+        this.psMetric = new SpaceMetric(inputManager, gngHandler);
     }
     
     @Override

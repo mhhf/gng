@@ -25,12 +25,12 @@ public class SpaceMetric {
     
     private final InputSpaceManager inputManager;
     private final PolygonBasedGNGHandler gngHandler;
-    private final GraphVisualizer graphVisualizer;
     
-    public SpaceMetric(InputSpaceManager inputManager, PolygonBasedGNGHandler gngHandler, GraphVisualizer graphVisualizer) {
+    
+    public SpaceMetric(InputSpaceManager inputManager, PolygonBasedGNGHandler gngHandler) {
         this.inputManager = inputManager;
         this.gngHandler = gngHandler;
-        this.graphVisualizer = graphVisualizer;
+        
     }
     
     public double calculateNegative(){
@@ -61,7 +61,7 @@ public class SpaceMetric {
 	for (int i = 0; i < steps; i++) {
 	    for (int j = 0; j < steps; j++) {
 		point = new Vector2D(i,j);
-		if( gngHandler.inputManager.pointInPolygon(point) ){
+		if( gngHandler.inputManager.pointInPolygon(point,true) ){
 		    node = gngHandler.getNearestNode( point );
 		    error += Math.sqrt( Math.pow( node.getX() - point.x , 2 ) 
 			    + Math.pow( node.getY() - point.y, 2 )   );
@@ -81,38 +81,6 @@ public class SpaceMetric {
 
 	return error / ( steps * steps );
     }
-    
-    public double[] calculate_b(){
-        BufferedImage img = new BufferedImage(450, 450, BufferedImage.TYPE_INT_ARGB);
-        Graphics g = img.getGraphics();
-        g.drawImage(inputManager.getVisualisation(), 0, 0, null);
-        Color c;
-        double totalPositive = 0;
-        double totalNegative = 0;
-        double coveredNegative = 0;
-        double  covered = 0;
-        
-        for (int x = 0; x < 300; x++) {
-            for (int y = 0; y < 300; y++) {
-                c = new Color(img.getRGB(x, y));
-                if( c.getBlue()>200 ) totalPositive++;
-                else totalNegative++;
-            }
-        }
-        
-	coveredNegative = totalNegative;
-        g.drawImage(graphVisualizer.drawFilledGraph( gngHandler.getComPoint() ), 0, 0, null);
-        
-        for (int x = 0; x < 300; x++) {
-            for (int y = 0; y < 300; y++) {
-                c = new Color(img.getRGB(x, y));
-                if( c.getBlue()<200 && c.getRed()>200 ) covered++;
-                if( c.getRed()<100 ) coveredNegative--;
-            }
-        }
-        
-        double[] result = {totalPositive/covered, 100* ( coveredNegative/totalNegative )};
-        return result;
-    }
+   
     
 }
