@@ -33,15 +33,15 @@ public class GNG {
      */
     public static void main(String[] args){
 		
-		/*try {
+		try {
 			initFrame();
 		} catch (IOException ex) {
 			Logger.getLogger(GNG.class.getName()).log(Level.SEVERE, null, ex);
-		}*/
+		}
 		
 		// HEADLERSS
 		
-		HeadlessSetup h = new HeadlessSetup();
+		//HeadlessSetup h = new HeadlessSetup();
 	
         
     }

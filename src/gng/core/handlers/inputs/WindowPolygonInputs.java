@@ -66,7 +66,7 @@ public class WindowPolygonInputs implements InputSpaceManager {
     }
     
     public void constructPolygon() {
-	    this.dynamicPolygon.construct(t);
+	    this.dynamicPolygon.construct(t/6);
 	    this.window = this.dynamicPolygon.getWindow();
 	    this.area = this.dynamicPolygon.getArea();
 	    this.obsticle = this.dynamicPolygon.getObsticle();
