@@ -1,2 +1,3 @@
-= Growing Neural Gas Implementation in Java =
+# Growing Neural Gas Implementation in Java
 
+![](gng.png)
